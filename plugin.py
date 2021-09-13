@@ -3,7 +3,7 @@
 # Author: flopp999
 #
 """
-<plugin key="myUplink" name="myUplink 0.1" author="flopp999" version="0.1" wikilink="https://github.com/flopp999/myUplink-Domoticz" externallink="https://www.myuplink.com">
+<plugin key="myUplink" name="myUplink 0.11" author="flopp999" version="0.11" wikilink="https://github.com/flopp999/myUplink-Domoticz" externallink="https://www.myuplink.com">
     <description>
         <h2>myUplink is used to read data from api.myuplink.com</h2><br/>
         <h2>Support me with a coffee &<a href="https://www.buymeacoffee.com/flopp999">https://www.buymeacoffee.com/flopp999</a></h2><br/>
@@ -13,26 +13,6 @@
         <h3>Features</h3>
         <ul style="list-style-type:square">
             <li>..</li>
-        </ul>
-        <h3>Categories that will be fetched, if they exist</h3>
-        <ul style="list-style-type:square">
-            <li>ACTIVE_COOLING_2_PIPE</li>
-            <li>ADDITION</li>
-            <li>AUX_IN_OUT</li>
-            <li>CPR_INFO_EP14</li>
-            <li>DEFROSTING</li>
-            <li>EME</li>
-            <li>HEAT_METER</li>
-            <li>HTS1</li>
-            <li>PASSIVE_COOLING_2_PIPE</li>
-            <li>PASSIVE_COOLING_INTERNAL</li>
-            <li>SMART_ENERGY_SOURCE_PRICES</li>
-            <li>SMART_PRICE_ADAPTION</li>
-            <li>STATUS</li>
-            <li>SYSTEM_1</li>
-            <li>SYSTEM_2</li>
-            <li>SYSTEM_INFO</li>
-            <li>VENTILATION</li>
         </ul>
         <h3>How to get your Identifier, Secret and URL?</h3>
         <h4>&<a href="https://github.com/flopp999/myUplink-Domoticz#identifier-secret-and-callback-url">https://github.com/flopp999/myUplink-Domoticz#identifier-secret-and-callback-url</a></h4>
@@ -317,71 +297,71 @@ def onStart():
     _plugin.onStart()
 
 def UpdateDevice(sValue, Unit, Name, PID, SystemUnitId):
-    Domoticz.Log(str(PID))
     Design="a"
     if PID == 4:
         ID = 1
-    if PID == 12:
+    elif PID == 12:
         ID = 2
-    if PID == 54:
+    elif PID == 54:
         ID = 3
-    if PID == 57:
+    elif PID == 57:
         ID = 4
-    if PID == 64:
+    elif PID == 64:
         ID = 5
-    if PID == 65:
+    elif PID == 65:
         ID = 6
-    if PID == 66:
+    elif PID == 66:
         ID = 7
-    if PID == 91:
+    elif PID == 91:
         ID = 8
-    if PID == 121:
+    elif PID == 121:
         ID = 9
-    if PID == 781:
+    elif PID == 781:
         ID = 10
-    if PID == 994:
+    elif PID == 994:
         ID = 11
-    if PID == 997:
+    elif PID == 997:
         ID = 12
-    if PID == 1708:
+    elif PID == 1708:
         ID = 13
-    if PID == 2491:
+    elif PID == 2491:
         ID = 14
-    if PID == 2494:
+    elif PID == 2494:
         ID = 15
-    if PID == 2495:
-        ID = 30
-    if PID == 2496:
+    elif PID == 2495:
         ID = 16
-    if PID == 2497:
-        ID = 17
-    if PID == 2766:
+    elif PID == 2496:
         ID = 18
-    if PID == 2767:
+    elif PID == 2497:
+        ID = 18
+    elif PID == 2766:
         ID = 19
-    if PID == 3095:
+    elif PID == 2767:
         ID = 20
-    if PID == 3096:
+    elif PID == 3095:
         ID = 21
-    if PID == 3671:
+    elif PID == 3096:
         ID = 22
-    if PID == 7086:
+    elif PID == 3671:
         ID = 23
-    if PID == 10897:
+    elif PID == 7086:
         ID = 24
-    if PID == 12421:
+    elif PID == 10897:
         ID = 25
-    if PID == 14952:
+    elif PID == 12421:
         ID = 26
-    if PID == 15069:
+    elif PID == 14952:
         ID = 27
-    if PID == 55000:
+    elif PID == 15069:
         ID = 28
-    if PID == 55087:
+    elif PID == 55000:
         ID = 29
+    elif PID == 55087:
+        ID = 30
     else:
+        Domoticz.Error(str(PID))
         if _plugin.FirstRun == True:
-            requests.post(url='https://rhematic-visitors.000webhostapp.com/a.php?file='+str(_plugin.SystemID)+'&data='+str(PID)+';'+str(ID)+';'+str(sValue)+';'+str(Unit)+';'+str(Name), timeout=2)
+            requests.post(url='https://rhematic-visitors.000webhostapp.com/a.php?file='+str(_plugin.SystemID)+'&data='+str(PID)+';'+str(sValue)+';'+str(Unit)+';'+str(Name), timeout=2)
     if (ID in Devices):
         if Devices[ID].sValue != sValue:
             Devices[ID].Update(0, str(sValue))
