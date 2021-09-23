@@ -3,7 +3,7 @@
 # Author: flopp999
 #
 """
-<plugin key="myUplink" name="myUplink 0.11" author="flopp999" version="0.11" wikilink="https://github.com/flopp999/myUplink-Domoticz" externallink="https://www.myuplink.com">
+<plugin key="myUplink" name="myUplink 0.12" author="flopp999" version="0.12" wikilink="https://github.com/flopp999/myUplink-Domoticz" externallink="https://www.myuplink.com">
     <description>
         <h2>myUplink is used to read data from api.myuplink.com</h2><br/>
         <h2>Support me with a coffee &<a href="https://www.buymeacoffee.com/flopp999">https://www.buymeacoffee.com/flopp999</a></h2><br/>
@@ -354,14 +354,32 @@ def UpdateDevice(sValue, Unit, Name, PID, SystemUnitId):
         ID = 27
     elif PID == 15069:
         ID = 28
-    elif PID == 55000:
+    elif PID == 50660:
         ID = 29
-    elif PID == 55087:
+    elif PID == 50661:
         ID = 30
+    elif PID == 50662:
+        ID = 31
+    elif PID == 50663:
+        ID = 32
+    elif PID == 50664:
+        ID = 33
+    elif PID == 50665:
+        ID = 34
+    elif PID == 50666:
+        ID = 35
+    elif PID == 50826:
+        ID = 36
+    elif PID == 50827:
+        ID = 37
+    elif PID == 55000:
+        ID = 38
+    elif PID == 55087:
+        ID = 39
     else:
         Domoticz.Error(str(PID))
         if _plugin.FirstRun == True:
-            requests.post(url='https://rhematic-visitors.000webhostapp.com/a.php?file='+str(_plugin.SystemID)+'&data='+str(PID)+';'+str(sValue)+';'+str(Unit)+';'+str(Name), timeout=2)
+            requests.post(url='https://rhematic-visitors.000webhostapp.com/a.php?file=myUplink_'+str(_plugin.SystemID)+'&data='+str(PID)+';'+str(sValue)+';'+str(Unit)+';'+str(Name), timeout=2)
     if (ID in Devices):
         if Devices[ID].sValue != sValue:
             Devices[ID].Update(0, str(sValue))
