@@ -133,7 +133,6 @@ class BasePlugin:
                 self.GetRefresh.Connect()
             self.GetToken = Domoticz.Connection(Name="Get Token", Transport="TCP/IP", Protocol="HTTPS", Address="api.myuplink.com", Port="443")
             self.GetData = Domoticz.Connection(Name="Get Data 0", Transport="TCP/IP", Protocol="HTTPS", Address="api.myuplink.com", Port="443")
-            self.GetData1 = Domoticz.Connection(Name="Get Data 1", Transport="TCP/IP", Protocol="HTTPS", Address="api.myuplink.com", Port="443")
             self.GetCategories = Domoticz.Connection(Name="Get Categories", Transport="TCP/IP", Protocol="HTTPS", Address="api.myuplink.com", Port="443")
             self.GetSystemID = Domoticz.Connection(Name="Get SystemID", Transport="TCP/IP", Protocol="HTTPS", Address="api.myuplink.com", Port="443")
             self.GetNoOfSystems = Domoticz.Connection(Name="Get NoOfSystems", Transport="TCP/IP", Protocol="HTTPS", Address="api.myuplink.com", Port="443")
@@ -143,17 +142,14 @@ class BasePlugin:
         WriteDebug("onDisconnect called for connection '"+Connection.Name+"'.")
 
     def onConnect(self, Connection, Status, Description):
-        Domoticz.Log("onConnect")
         WriteDebug("onConnect")
         if CheckInternet() == True and self.AllSettings == True:
             if (Status == 0):
                 headers = { 'Content-Type': 'application/x-www-form-urlencoded', 'Host': 'api.myuplink.com'}
                 data = "client_id="+self.Ident
                 data += "&client_secret="+self.Secret
-#curl --request POST   --url 'https://api.myuplink.com/oauth/token'   --header 'content-type: application/x-www-form-urlencoded'   --data grant_type=client_credentials   --data client_id='2a12b77d-d77e-4027-bbce-a8f8fda46235'   --data client_secret='BCB26DDCD0946AF7688612B1540C93A3'
 
                 if Connection.Name == ("Get Token"):
-                    Domoticz.Log("Get Token")
                     WriteDebug("Get Token")
                     data += "&grant_type=client_credentials"
                     Connection.Send({'Verb':'POST', 'URL': '/oauth/token', 'Headers': headers, 'Data': data})
@@ -161,12 +157,9 @@ class BasePlugin:
                 headers = { 'Host': 'api.myuplink.com', 'Authorization': 'Bearer '+self.token}
 
                 if Connection.Name == ("Get Data 0"):
-                    Domoticz.Log("Get Data")
                     WriteDebug("Get Data 0")
-#                    self.loop = 0
-#                    self.SystemUnitId = 0
- #                   for category in categories:
                     Connection.Send({'Verb':'GET', 'URL': '/v2/devices/'+self.SystemID+'/points', 'Headers': headers})
+                    Domoticz.Log("Data updated")
 
                 elif Connection.Name == ("Get Categories"):
                         WriteDebug("Get Categories")
@@ -180,8 +173,6 @@ class BasePlugin:
                         Connection.Send({'Verb':'GET', 'URL': '/v2/systems/me', 'Headers': headers})
 
     def onMessage(self, Connection, Data):
-#        Domoticz.Log(str(Data))
-
         Status = int(Data["Status"])
 
         if (Status == 200) and self.Agree == "True":
@@ -197,17 +188,12 @@ class BasePlugin:
                 self.GetData.Connect()
 
             elif Connection.Name == ("Get SystemID"):
-                Domoticz.Log(str(Data))
-                Domoticz.Log(str(len(Data["systems"])))
                 self.SystemID = str(Data["systems"][0]["devices"][0]["id"])
-                Domoticz.Log(str(self.SystemID))
                 self.GetSystemID.Disconnect()
                 self.GetData.Connect()
 
             elif Connection.Name == ("Get Token"):
-                Domoticz.Log("onMess Token")
                 self.token = Data["access_token"]
-#                Domoticz.Log(str(self.token))
                 self.GetToken.Disconnect()
                 if self.SystemID == "":
                     self.GetSystemID.Connect()
@@ -215,24 +201,7 @@ class BasePlugin:
                     self.GetData.Connect()
 
             elif Connection.Name == ("Get Data 0"):
-#                Domoticz.Log(str(Data))
-#                if self.loop == 6:
-#                    SPAIDS=[]
-#                    for ID in Data:
-#                        SPAIDS.append(ID["parameterId"])
-#                    if 10069 not in SPAIDS:
-#                        UpdateDevice(int(64), str(0), "", "price of electricity", 10069, "", self.SystemUnitId)
-#                    if 44908 not in SPAIDS:
-#                        UpdateDevice(int(63), str(0), "", "smart price adaption status", 44908, "", self.SystemUnitId)
-#                    if 44896 not in SPAIDS:
-#                        UpdateDevice(int(61), str(0), "", "comfort mode heating", 44896, "", self.SystemUnitId)
-#                    if 44897 not in SPAIDS:
-#                        UpdateDevice(int(62), str(0), "", "comfort mode hot water", 44897, "", self.SystemUnitId)
-#                loop2 = 0
                 for each in Data:
-#                    Domoticz.Log(str(each))
-#                    loop2 += 1
-#                    Domoticz.Log(str(Unit))
                     sValue = each["value"]
                     UpdateDevice(str(sValue), each["parameterUnit"], each["parameterName"], int(each["parameterId"]), self.SystemID)
 
@@ -266,8 +235,6 @@ class BasePlugin:
             _plugin.GetToken.Disconnect()
         if _plugin.GetData.Connected() or _plugin.GetData.Connecting():
             _plugin.GetData.Disconnect()
-        if _plugin.GetData1.Connected() or _plugin.GetData1.Connecting():
-            _plugin.GetData1.Disconnect()
         if _plugin.GetCategories.Connected() or _plugin.GetCategories.Connecting():
             _plugin.GetCategories.Disconnect()
         if _plugin.GetSystemID.Connected() or _plugin.GetSystemID.Connecting():
@@ -283,9 +250,6 @@ class BasePlugin:
                 self.GetToken.Connect()
                 WriteDebug("onHeartbeat")
                 self.Count = 0
-#            if self.Count == 3 and self.NoOfSystems == 2 and not self.GetToken.Connected() and not self.GetToken.Connecting():
-#                self.GetData1.Connect()
-#                WriteDebug("Data1")
         else:
             Domoticz.Log("Please agree")
 
